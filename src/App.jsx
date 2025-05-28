@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useForm, useFieldArray } from "react-hook-form";
 import "./App.css";
+import { backendUrl } from "./CommonExports";
 
 const temperatureOptions = [0.0, 0.7, 1.2];
 const maxTokensOptions = [50, 150, 300];
@@ -35,6 +36,23 @@ function App() {
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [reflection, setReflection] = useState("");
+  const [reflecting, setReflecting] = useState(false);
+
+  const generateReflection = async () => {
+    setReflecting(true);
+    setReflection("");
+    try {
+      const res = await axios.post(`${backendUrl}api/analyze`, {
+        results,
+      });
+      setReflection(res.data.reflection);
+    } catch (err) {
+      setReflection(`Error: ${err.message}`);
+    } finally {
+      setReflecting(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -52,7 +70,7 @@ function App() {
       };
 
       try {
-        const res = await axios.post("http://localhost:5000/api/generate", {
+        const res = await axios.post(`${backendUrl}api/generate`, {
           systemPrompt,
           userPrompt,
           ...parsedConfig,
@@ -195,6 +213,21 @@ function App() {
               ))}
             </tbody>
           </table>
+          <div style={{ marginTop: "1rem" }}>
+            <button
+              onClick={generateReflection}
+              disabled={reflecting}
+              className="submit-button"
+            >
+              {reflecting ? "Analyzing..." : "Generate 2-Paragraph Reflection"}
+            </button>
+          </div>
+          {reflection && (
+            <div className="reflection">
+              <h2>Reflection</h2>
+              <p>{reflection}</p>
+            </div>
+          )}
         </div>
       )}
     </div>
