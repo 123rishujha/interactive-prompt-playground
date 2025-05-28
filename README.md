@@ -94,4 +94,5 @@ interactive-prompt-playground/
 - OpenAI API key
 
 ---
+![screencapture-localhost-5177-2025-05-28-19_43_45](https://github.com/user-attachments/assets/a7f436f2-6125-47c2-9de5-3e956256e7bb)
 
